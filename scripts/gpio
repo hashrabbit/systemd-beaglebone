@@ -1,0 +1,91 @@
+#!/bin/sh
+
+set -o errexit
+[ "$DEBUG" ] && set -o xtrace
+
+NAME=$(basename "$0")
+CONFIG=/usr/lib/gpios.d
+SYSPATH=/sys/class/gpio
+
+fatal() {
+  echo "$NAME: $*" >&2
+  exit 1
+}
+
+usage() {
+  echo "Usage:
+  $NAME <command> [options]
+
+$NAME controls GPIOs defined within /etc/gpios.
+
+Global Options:
+  -h, --help    Show usage information and exit
+
+Commands:
+  export      Export GPIOs
+  unexport    Unexport GPIOs"
+}
+
+read_config() {
+  find $CONFIG -type f | xargs cat
+}
+
+export_gpio() {
+  pin=$1
+  dir=$2
+  val=$3
+
+  gpio="$SYSPATH/gpio$pin"
+
+  if [ ! -d $gpio ]; then
+    echo $pin > $SYSPATH/export
+    usleep 50000
+  fi
+
+  if [ "$dir" ]; then
+    echo $dir > $gpio/direction
+    usleep 50000
+  fi
+
+  if [ "$val" ]; then
+    echo $val > $gpio/value
+    usleep 50000
+  fi
+}
+
+unexport_gpio() {
+  pin=$1
+  gpio="$SYSPATH/gpio$pin"
+
+  if [ -d $gpio ]; then
+    echo $pin > $SYSPATH/unexport
+  fi
+}
+
+main() {
+  case "$1" in
+  -h|--help)
+    usage
+    exit
+    ;;
+  export)
+    cmd="export_gpio"
+    ;;
+  unexport)
+    cmd="unexport_gpio"
+    ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
+  esac
+
+  [ -d $CONFIG ] || fatal "$CONFIG does not exist"
+
+  find $CONFIG -type f | sort | xargs sed -e 's/#.*$//' -e 's/\s+$//' -e '/^$/d' | \
+  while read line; do
+    $cmd $line
+  done
+}
+
+main "$@"

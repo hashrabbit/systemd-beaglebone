@@ -1,0 +1,4 @@
+# /usr/lib/gpios.d/README
+#
+# <pin>  <direction>  <value>
+# 1337   out          9001
