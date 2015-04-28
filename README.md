@@ -45,7 +45,7 @@ echo 456 > /sys/class/gpios/export
 echo in > /sys/class/gpios/gpio456/direction
 ```
 
-[README.gpios]: https://github.com/hashrabbit/README.gpios
+[README.gpios]: https://github.com/hashrabbit/systemd-beaglebone/blob/master/README.gpios
 
 ## Contributing
 
