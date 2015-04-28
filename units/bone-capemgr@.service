@@ -1,0 +1,16 @@
+[Unit]
+Description=Device Tree Overlay for %i Cape
+DefaultDependencies=no
+After=local-fs.target
+Before=sysinit.target shutdown.target
+Conflicts=shutdown.target
+ConditionPathExistsGlob=/sys/devices/bone_capemgr.*/slots
+ConditionVirtualization=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c 'echo %i > $(ls /sys/devices/bone_capemgr.*/slots)'
+
+[Install]
+WantedBy=sysinit.target
