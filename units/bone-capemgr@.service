@@ -1,5 +1,6 @@
 [Unit]
 Description=Device Tree Overlay for %i Cape
+Documentation=https://github.com/hashrabbit/systemd-beaglebone#readme
 DefaultDependencies=no
 After=local-fs.target
 Before=sysinit.target shutdown.target
