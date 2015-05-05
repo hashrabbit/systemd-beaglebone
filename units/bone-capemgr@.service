@@ -14,4 +14,4 @@ RemainAfterExit=yes
 ExecStart=/bin/sh -c 'echo %i > $(ls /sys/devices/bone_capemgr.*/slots)'
 
 [Install]
-WantedBy=sysinit.target
+WantedBy=bone-capemgr.target
